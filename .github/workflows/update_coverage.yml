@@ -1,0 +1,25 @@
+name: test and update coverage
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get repo
+        uses: actions/checkout@v4
+      - name: test code
+        run: make test
+
+  update_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get repo
+        uses: actions/checkout@v4
+      - name: install deps
+        run: make install
+      - name: update coverage
+        uses: paambaati/codeclimate-action@v9.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageCommand: make test-coverage
