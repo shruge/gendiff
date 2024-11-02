@@ -10,15 +10,18 @@ const getFilePath = (filename) => path.join(__dirname, '..', '__fixtures__', fil
 const readFile = (filename) => fs.readFileSync(getFilePath(filename), 'utf8');
 
 test('test genDiff', () => {
-  const file1 = getFilePath('file1.json');
-  const file2 = getFilePath('file2.json');
+  const jsonFile1 = getFilePath('file1.json');
+  const jsonFile2 = getFilePath('file2.json');
+  const ymlFile1 = getFilePath('file1.yml');
+  const ymlFile2 = getFilePath('file2.yml');
   const file1Err = getFilePath('file1');
   const file2Err = getFilePath('file2');
-  const answer = readFile('expected');
+  const answer = readFile('expected').trim();
 
-  expect(`${genDiff(file1, file2)}\n`).toEqual(answer);
-  expect(() => `${genDiff(file1Err, file2)}\n`).toThrow();
-  expect(() => `${genDiff(file1, file2Err)}\n`).toThrow();
+  expect(genDiff(jsonFile1, jsonFile2)).toEqual(answer);
+  expect(genDiff(ymlFile1, ymlFile2)).toEqual(answer);
+  expect(() => `${genDiff(file1Err, jsonFile2)}\n`).toThrow();
+  expect(() => `${genDiff(ymlFile1, file2Err)}\n`).toThrow();
   expect(() => `${genDiff(file1Err, file2Err)}\n`).toThrow();
   expect(() => `${genDiff(null, null)}\n`).toThrow();
 });

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { cwd } from 'node:process';
 import compare from './compare.js';
-import parseData from './parser.js';
+import parseData from './parsers.js';
 
 const getAbsPath = (filepath) => path.resolve(cwd(), filepath);
 const getParsedData = (filepath) => {
