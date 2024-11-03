@@ -8,9 +8,9 @@ program
   .name('gendiff')
   .description('Compares two configuration files and shows a difference.')
   .version('0.0.1')
-  .option('-f, --format [type]', 'output format')
+  .option('-f, --format [type]', 'output format', 'stylish')
   .arguments('<filepath1> <filepath2>')
-  .action((path1, path2) => {
-    console.log(genDiff(path1, path2));
+  .action((path1, path2, opts) => {
+    console.log(genDiff(path1, path2, opts.format));
   })
   .parse();
