@@ -11,6 +11,9 @@
 [![asciicast](https://asciinema.org/a/moRBLzKrPoEUXS89LaN7fGIBl.svg)](https://asciinema.org/a/moRBLzKrPoEUXS89LaN7fGIBl)
 
 <h2>Рекурсивный поиск различий между двумя файлами</h2>
-<h3>JSON:<h3>
 
 [![asciicast](https://asciinema.org/a/My8OzKlr62ZBFEUqpXRnMcWgp.svg)](https://asciinema.org/a/My8OzKlr62ZBFEUqpXRnMcWgp)
+
+<h2>Вывод различий в плоском формате</h2>
+
+[![asciicast](https://asciinema.org/a/J5eA69Bd6kZPStRlJMDriGIZW.svg)](https://asciinema.org/a/J5eA69Bd6kZPStRlJMDriGIZW)
