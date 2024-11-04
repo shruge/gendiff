@@ -4,6 +4,10 @@ export const isObject = (data) => {
   return false;
 };
 
+export const getAllKeys = (data1, data2) => (
+  Array.from(new Set(Object.keys(data1).concat(Object.keys(data2)))).sort()
+);
+
 export const getValueOrString = (value) => {
   if (isObject(value)) return '[complex value]';
   if (typeof value === 'string') return `'${value}'`;

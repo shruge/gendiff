@@ -1,8 +1,8 @@
-import { isObject, getValueOrString } from './helpers.js';
+import { isObject, getAllKeys, getValueOrString } from './helpers.js';
 
 const getPlain = (file1, file2) => {
   const recursion = (data1, data2, path = '') => {
-    const keys = Array.from(new Set(Object.keys(data1).concat(Object.keys(data2)))).sort();
+    const keys = getAllKeys(data1, data2);
 
     return keys.reduce((acc, key) => {
       const currentPath = path ? `${path}.${key}` : key;

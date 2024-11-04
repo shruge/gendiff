@@ -1,32 +1,32 @@
-import { isObject, toStringify } from './helpers.js';
+import { isObject, toStringify, getAllKeys } from './helpers.js';
 
 const getStylish = (file1, file2) => {
   const recursion = (data1, data2) => {
-    const keys = Array.from(new Set(Object.keys(data1).concat(Object.keys(data2)))).sort();
+    const keys = getAllKeys(data1, data2);
 
     return keys.reduce((acc, key) => {
+      const value1 = data1[key];
+      const value2 = data2[key];
       const existsInData1 = Object.hasOwn(data1, key);
       const existsInData2 = Object.hasOwn(data2, key);
 
       if (existsInData1 && !existsInData2) {
-        if (isObject(data1[key])) acc[`- ${key}`] = recursion(data1[key], data1[key]);
-        else acc[`- ${key}`] = data1[key];
+        // eslint-disable-next-line no-param-reassign
+        acc[`- ${key}`] = isObject(value1) ? recursion(value1, value1) : value1;
       } else if (!existsInData1 && existsInData2) {
-        if (isObject(data2[key])) acc[`+ ${key}`] = recursion(data2[key], data2[key]);
-        else acc[`+ ${key}`] = data2[key];
-      } else if (isObject(data1[key]) && isObject(data2[key])) acc[`  ${key}`] = recursion(data1[key], data2[key]);
-      else if (data1[key] !== data2[key]) {
-        if (isObject(data1[key]) && !isObject(data2[key])) {
-          acc[`- ${key}`] = recursion(data1[key], data1[key]);
-          acc[`+ ${key}`] = data2[key];
-          //        } else if (!isObject(data1[key]) && isObject(data2[key])) {
-          //          acc[`+ ${key}`] = recursion(data2[key], data2[key]);
-          //          acc[`- ${key}`] = data1[key];
-        } else {
-          acc[`- ${key}`] = data1[key];
-          acc[`+ ${key}`] = data2[key];
-        }
-      } else acc[`  ${key}`] = data1[key];
+        // eslint-disable-next-line no-param-reassign
+        acc[`+ ${key}`] = isObject(value2) ? recursion(value2, value2) : value2;
+      } else if (isObject(value1) && isObject(value2)) {
+        // eslint-disable-next-line no-param-reassign
+        acc[`  ${key}`] = recursion(value1, value2);
+      } else if (value1 !== value2) {
+        // eslint-disable-next-line no-param-reassign
+        acc[`- ${key}`] = isObject(value1) ? recursion(value1, value1) : value1;
+        acc[`+ ${key}`] = isObject(value2) ? recursion(value2, value2) : value2;
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        acc[`  ${key}`] = value1;
+      }
 
       return acc;
     }, {});
