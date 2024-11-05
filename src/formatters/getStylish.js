@@ -1,4 +1,16 @@
-import { isObject, toStringify, getAllKeys } from './helpers.js';
+import { isObject, getAllKeys } from './helpers.js';
+
+const toStringify = (data, replacer = ' ', spacesCount = 4, depth = 1) => {
+  if (!isObject(data)) return data;
+
+  const entries = Object.entries(data);
+  const indents = replacer.repeat((spacesCount * depth) - 2);
+
+  return `${entries.reduce((acc, [key, value]) => {
+    if (!isObject(value)) return `${acc}\n${indents}${key}: ${value}`;
+    return `${acc}\n${indents}${key}: ${toStringify(value, replacer, spacesCount, depth + 1)}`;
+  }, '{')}\n${indents.slice(0, -2)}}`;
+};
 
 const getStylish = (file1, file2) => {
   const recursion = (data1, data2) => {
@@ -7,13 +19,11 @@ const getStylish = (file1, file2) => {
     return keys.reduce((acc, key) => {
       const value1 = data1[key];
       const value2 = data2[key];
-      const existsInData1 = Object.hasOwn(data1, key);
-      const existsInData2 = Object.hasOwn(data2, key);
 
-      if (existsInData1 && !existsInData2) {
+      if (!Object.hasOwn(data2, key)) {
         // eslint-disable-next-line no-param-reassign
         acc[`- ${key}`] = isObject(value1) ? recursion(value1, value1) : value1;
-      } else if (!existsInData1 && existsInData2) {
+      } else if (!Object.hasOwn(data1, key)) {
         // eslint-disable-next-line no-param-reassign
         acc[`+ ${key}`] = isObject(value2) ? recursion(value2, value2) : value2;
       } else if (isObject(value1) && isObject(value2)) {

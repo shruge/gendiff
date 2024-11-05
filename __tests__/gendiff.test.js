@@ -38,4 +38,15 @@ describe('gendiff with different formats', () => {
     expect(() => genDiff(file1Err, file2Err, 'plain')).toThrow();
     expect(() => genDiff(null, null, 'plain')).toThrow();
   });
+
+  test('test json', () => {
+    const answer = readFile('expectedJSON').trim();
+
+    expect(genDiff(jsonFile1, jsonFile2, 'json')).toEqual(answer);
+    expect(genDiff(ymlFile1, ymlFile2, 'json')).toEqual(answer);
+    expect(() => genDiff(file1Err, jsonFile2, 'json')).toThrow();
+    expect(() => genDiff(ymlFile1, file2Err, 'json')).toThrow();
+    expect(() => genDiff(file1Err, file2Err, 'json')).toThrow();
+    expect(() => genDiff(null, null, 'json')).toThrow();
+  });
 });
