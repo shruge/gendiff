@@ -4,7 +4,7 @@
 <h1>Установка:</h1>
 
 ```
-git clone git@github.com:shruge/frontend-project-44.git
+git clone git@github.com:shruge/frontend-project-46.git
 make install
 npm link
 ```
