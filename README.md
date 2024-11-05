@@ -10,6 +10,7 @@ npm link
 ```
 
 <h2>Описание использования</h2>
+
 ```
 Usage: gendiff [options] <filepath1> <filepath2>
 Compares two configuration files and shows a difference.
