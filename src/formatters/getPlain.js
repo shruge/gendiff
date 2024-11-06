@@ -1,4 +1,4 @@
-import { isObject, getAllKeys } from './helpers.js';
+import isObject from '../helpers.js';
 
 const getValueOrString = (value) => {
   if (isObject(value)) return '[complex value]';
@@ -7,35 +7,34 @@ const getValueOrString = (value) => {
   return value;
 };
 
-const getPlain = (file1, file2) => {
-  const recursion = (data1, data2, path = '') => {
-    const keys = getAllKeys(data1, data2);
+const getPlain = (tree, path = '') => tree.reduce((acc, obj) => {
+  const currentPath = path ? `${path}.${obj.key}` : obj.key;
+  const value = getValueOrString(obj?.value);
+  const oldValue = getValueOrString(obj?.oldValue);
+  const newValue = getValueOrString(obj?.newValue);
 
-    return keys.reduce((acc, key) => {
-      const currentPath = path ? `${path}.${key}` : key;
-
-      if (!Object.hasOwn(data2, key)) {
+  switch (obj.state) {
+    case 'removed':
       // eslint-disable-next-line no-param-reassign
-        acc += `Property '${currentPath}' was removed\n`;
-      } else if (!Object.hasOwn(data1, key)) {
-        const value = getValueOrString(data2[key]);
-        // eslint-disable-next-line no-param-reassign
-        acc += `Property '${currentPath}' was added with value: ${value}\n`;
-      } else if (isObject(data1[key]) && isObject(data2[key])) {
-        // eslint-disable-next-line no-param-reassign
-        acc += recursion(data1[key], data2[key], currentPath);
-      } else if (data1[key] !== data2[key]) {
-        const value1 = getValueOrString(data1[key]);
-        const value2 = getValueOrString(data2[key]);
-        // eslint-disable-next-line no-param-reassign
-        acc += `Property '${currentPath}' was updated. From ${value1} to ${value2}\n`;
-      }
+      acc += `\nProperty '${currentPath}' was removed`;
+      break;
+    case 'added':
+      // eslint-disable-next-line no-param-reassign
+      acc += `\nProperty '${currentPath}' was added with value: ${value}`;
+      break;
+    case 'nested':
+      // eslint-disable-next-line no-param-reassign
+      acc += `\n${getPlain(obj.items, currentPath)}`;
+      break;
+    case 'changed':
+      // eslint-disable-next-line no-param-reassign
+      acc += `\nProperty '${currentPath}' was updated. From ${oldValue} to ${newValue}`;
+      break;
+    case 'unchanged': break;
+    default: throw new Error(`Unexpected '${tree.state}' state`);
+  }
 
-      return acc;
-    }, '');
-  };
-
-  return recursion(file1, file2).trim();
-};
+  return acc;
+}, '').trim();
 
 export default getPlain;

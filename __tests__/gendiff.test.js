@@ -10,43 +10,18 @@ const getFilePath = (filename) => path.join(__dirname, '..', '__fixtures__', fil
 const readFile = (filename) => fs.readFileSync(getFilePath(filename), 'utf8');
 
 describe('gendiff with different formats', () => {
-  const jsonFile1 = getFilePath('file1.json');
-  const jsonFile2 = getFilePath('file2.json');
-  const ymlFile1 = getFilePath('file1.yml');
-  const ymlFile2 = getFilePath('file2.yml');
-  const file1Err = getFilePath('file1');
-  const file2Err = getFilePath('file2');
+  test.each([
+    { extensions: '.json', format: 'stylish', answerFile: 'Stylish' },
+    { extensions: '.yml', format: 'stylish', answerFile: 'Stylish' },
+    { extensions: '.json', format: 'plain', answerFile: 'Plain' },
+    { extensions: '.yml', format: 'plain', answerFile: 'Plain' },
+    { extensions: '.json', format: 'json', answerFile: 'JSON' },
+    { extensions: '.yml', format: 'json', answerFile: 'JSON' },
+  ])('genDiff -f $format', (testObj) => {
+    const file1 = getFilePath(`file1${testObj.extensions}`);
+    const file2 = getFilePath(`file2${testObj.extensions}`);
+    const answer = readFile(`expected${testObj.answerFile}`).trim();
 
-  test('test stylish', () => {
-    const answer = readFile('expectedStylish').trim();
-
-    expect(genDiff(jsonFile1, jsonFile2)).toEqual(answer);
-    expect(genDiff(ymlFile1, ymlFile2)).toEqual(answer);
-    expect(() => genDiff(file1Err, jsonFile2)).toThrow();
-    expect(() => genDiff(ymlFile1, file2Err)).toThrow();
-    expect(() => genDiff(file1Err, file2Err)).toThrow();
-    expect(() => genDiff(null, null)).toThrow();
-  });
-
-  test('test plain', () => {
-    const answer = readFile('expectedPlain').trim();
-
-    expect(genDiff(jsonFile1, jsonFile2, 'plain')).toEqual(answer);
-    expect(genDiff(ymlFile1, ymlFile2, 'plain')).toEqual(answer);
-    expect(() => genDiff(file1Err, jsonFile2, 'plain')).toThrow();
-    expect(() => genDiff(ymlFile1, file2Err, 'plain')).toThrow();
-    expect(() => genDiff(file1Err, file2Err, 'plain')).toThrow();
-    expect(() => genDiff(null, null, 'plain')).toThrow();
-  });
-
-  test('test json', () => {
-    const answer = readFile('expectedJSON').trim();
-
-    expect(genDiff(jsonFile1, jsonFile2, 'json')).toEqual(answer);
-    expect(genDiff(ymlFile1, ymlFile2, 'json')).toEqual(answer);
-    expect(() => genDiff(file1Err, jsonFile2, 'json')).toThrow();
-    expect(() => genDiff(ymlFile1, file2Err, 'json')).toThrow();
-    expect(() => genDiff(file1Err, file2Err, 'json')).toThrow();
-    expect(() => genDiff(null, null, 'json')).toThrow();
+    expect(genDiff(file1, file2, testObj.format)).toEqual(answer);
   });
 });

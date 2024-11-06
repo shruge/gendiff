@@ -1,13 +1,12 @@
-import getJson from './getJson.js';
 import getPlain from './getPlain.js';
 import getStylish from './getStylish.js';
 
-const selectOutFormat = (data1, data2, format) => {
+const selectOutFormat = (tree, format) => {
   switch (format) {
-    case 'json': return getJson(data1, data2);
-    case 'plain': return getPlain(data1, data2);
-    case 'stylish': return getStylish(data1, data2);
-    default: throw new Error(`Unexpected ${format} format`);
+    case 'plain': return getPlain(tree);
+    case 'stylish': return getStylish(tree);
+    case 'json': return JSON.stringify(tree, ' ', 3);
+    default: throw new Error(`Unexpected '${format}' convert format`);
   }
 };
 

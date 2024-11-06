@@ -1,48 +1,50 @@
-import { isObject, getAllKeys } from './helpers.js';
+import isObject from '../helpers.js';
 
 const toStringify = (data, replacer = ' ', spacesCount = 4, depth = 1) => {
-  if (!isObject(data)) return data;
+  if (!isObject(data)) return String(data);
 
+  const leftShift = 2;
+  const signs = [' ', '+', '-'];
   const entries = Object.entries(data);
-  const indents = replacer.repeat((spacesCount * depth) - 2);
+  const indents = replacer.repeat((spacesCount * depth) - leftShift);
 
   return `${entries.reduce((acc, [key, value]) => {
-    if (!isObject(value)) return `${acc}\n${indents}${key}: ${value}`;
-    return `${acc}\n${indents}${key}: ${toStringify(value, replacer, spacesCount, depth + 1)}`;
-  }, '{')}\n${indents.slice(0, -2)}}`;
+    if (!signs.includes(key[0])) {
+      return `${acc}\n${indents}  ${key}: ${toStringify(value, ' ', 4, depth + 1)}`;
+    }
+    return `${acc}\n${indents}${key}: ${toStringify(value, ' ', 4, depth + 1)}`;
+  }, '{')}\n${indents.slice(0, -leftShift)}}`;
 };
 
-const getStylish = (file1, file2) => {
-  const recursion = (data1, data2) => {
-    const keys = getAllKeys(data1, data2);
+const getStylish = (tree) => {
+  const recursion = (arr) => arr.reduce((acc, obj) => {
+    switch (obj.state) {
+      case 'removed':
+        acc[`- ${obj.key}`] = obj.value;
+        break;
+      case 'added':
+        acc[`+ ${obj.key}`] = obj.value;
+        break;
+      case 'nested':
+        acc[`  ${obj.key}`] = recursion(obj.items);
+        break;
+      case 'changed':
+        acc[`- ${obj.key}`] = obj.oldValue;
+        acc[`+ ${obj.key}`] = obj.newValue;
+        break;
+      case 'unchanged':
+        acc[`  ${obj.key}`] = obj.value;
+        break;
+      case undefined:
+        acc[`  ${obj.key}`] = obj.value;
+        break;
+      default: throw new Error(`Unexpected '${obj.state}' state`);
+    }
 
-    return keys.reduce((acc, key) => {
-      const value1 = data1[key];
-      const value2 = data2[key];
+    return acc;
+  }, {});
 
-      if (!Object.hasOwn(data2, key)) {
-        // eslint-disable-next-line no-param-reassign
-        acc[`- ${key}`] = isObject(value1) ? recursion(value1, value1) : value1;
-      } else if (!Object.hasOwn(data1, key)) {
-        // eslint-disable-next-line no-param-reassign
-        acc[`+ ${key}`] = isObject(value2) ? recursion(value2, value2) : value2;
-      } else if (isObject(value1) && isObject(value2)) {
-        // eslint-disable-next-line no-param-reassign
-        acc[`  ${key}`] = recursion(value1, value2);
-      } else if (value1 !== value2) {
-        // eslint-disable-next-line no-param-reassign
-        acc[`- ${key}`] = isObject(value1) ? recursion(value1, value1) : value1;
-        acc[`+ ${key}`] = isObject(value2) ? recursion(value2, value2) : value2;
-      } else {
-        // eslint-disable-next-line no-param-reassign
-        acc[`  ${key}`] = value1;
-      }
-
-      return acc;
-    }, {});
-  };
-
-  return toStringify(recursion(file1, file2), ' ', 4);
+  return toStringify(recursion(tree));
 };
 
 export default getStylish;
