@@ -1,9 +1,10 @@
+import _ from 'lodash';
 import isObject from './helpers.js';
 
 const getAllKeys = (data1, data2) => {
   const keys = [...Object.keys(data1), ...Object.keys(data2)];
 
-  return Array.from(new Set(keys)).toSorted();
+  return _.sortBy(Array.from(new Set(keys)));
 };
 
 const genTree = (file1, file2) => {
