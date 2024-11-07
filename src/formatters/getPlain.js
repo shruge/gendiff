@@ -4,37 +4,38 @@ const getValueOrString = (value) => {
   if (isObject(value)) return '[complex value]';
   if (typeof value === 'string') return `'${value}'`;
 
-  return value;
+  return String(value);
 };
 
 const getPlain = (tree, path = '') => tree.reduce((acc, obj) => {
-  const currentPath = path ? `${path}.${obj.key}` : obj.key;
-  const value = getValueOrString(obj?.value);
-  const oldValue = getValueOrString(obj?.oldValue);
-  const newValue = getValueOrString(obj?.newValue);
+  const {
+    key, state, value: val,
+    oldValue: oldVal, newValue: newVal, items,
+  } = obj;
+  const temp = [];
+  const value = getValueOrString(val);
+  const oldValue = getValueOrString(oldVal);
+  const newValue = getValueOrString(newVal);
+  const currentPath = path ? `${path}.${key}` : key;
 
-  switch (obj.state) {
+  switch (state) {
     case 'removed':
-      // eslint-disable-next-line no-param-reassign
-      acc += `\nProperty '${currentPath}' was removed`;
+      temp.push(`\nProperty '${currentPath}' was removed`);
       break;
     case 'added':
-      // eslint-disable-next-line no-param-reassign
-      acc += `\nProperty '${currentPath}' was added with value: ${value}`;
+      temp.push(`\nProperty '${currentPath}' was added with value: ${value}`);
       break;
     case 'nested':
-      // eslint-disable-next-line no-param-reassign
-      acc += `\n${getPlain(obj.items, currentPath)}`;
+      temp.push(`\n${getPlain(items, currentPath)}`);
       break;
     case 'changed':
-      // eslint-disable-next-line no-param-reassign
-      acc += `\nProperty '${currentPath}' was updated. From ${oldValue} to ${newValue}`;
+      temp.push(`\nProperty '${currentPath}' was updated. From ${oldValue} to ${newValue}`);
       break;
     case 'unchanged': break;
-    default: throw new Error(`Unexpected '${tree.state}' state`);
+    default: throw new Error(`Unexpected '${state}' state`);
   }
 
-  return acc;
+  return `${acc}${temp.join('')}`;
 }, '').trim();
 
 export default getPlain;

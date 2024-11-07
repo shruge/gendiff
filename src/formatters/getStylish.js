@@ -18,30 +18,36 @@ const toStringify = (data, replacer = ' ', spacesCount = 4, depth = 1) => {
 
 const getStylish = (tree) => {
   const recursion = (arr) => arr.reduce((acc, obj) => {
-    switch (obj.state) {
+    const {
+      key, state, value,
+      oldValue, newValue, items,
+    } = obj;
+    const temp = {};
+
+    switch (state) {
       case 'removed':
-        acc[`- ${obj.key}`] = obj.value;
+        temp[`- ${key}`] = value;
         break;
       case 'added':
-        acc[`+ ${obj.key}`] = obj.value;
+        temp[`+ ${key}`] = value;
         break;
       case 'nested':
-        acc[`  ${obj.key}`] = recursion(obj.items);
+        temp[`  ${obj.key}`] = recursion(items);
         break;
       case 'changed':
-        acc[`- ${obj.key}`] = obj.oldValue;
-        acc[`+ ${obj.key}`] = obj.newValue;
+        temp[`- ${key}`] = oldValue;
+        temp[`+ ${key}`] = newValue;
         break;
       case 'unchanged':
-        acc[`  ${obj.key}`] = obj.value;
+        temp[`  ${key}`] = value;
         break;
       case undefined:
-        acc[`  ${obj.key}`] = obj.value;
+        temp[`  ${key}`] = value;
         break;
-      default: throw new Error(`Unexpected '${obj.state}' state`);
+      default: throw new Error(`Unexpected '${state}' state`);
     }
 
-    return acc;
+    return { ...acc, ...temp };
   }, {});
 
   return toStringify(recursion(tree));
