@@ -12,7 +12,6 @@ const getPlain = (tree, path = '') => tree.reduce((acc, obj) => {
     key, state, value: val,
     oldValue: oldVal, newValue: newVal, items,
   } = obj;
-  const temp = [];
   const value = getValueOrString(val);
   const oldValue = getValueOrString(oldVal);
   const newValue = getValueOrString(newVal);
@@ -20,22 +19,16 @@ const getPlain = (tree, path = '') => tree.reduce((acc, obj) => {
 
   switch (state) {
     case 'removed':
-      temp.push(`\nProperty '${currentPath}' was removed`);
-      break;
+      return `${acc}\nProperty '${currentPath}' was removed`;
     case 'added':
-      temp.push(`\nProperty '${currentPath}' was added with value: ${value}`);
-      break;
+      return `${acc}\nProperty '${currentPath}' was added with value: ${value}`;
     case 'nested':
-      temp.push(`\n${getPlain(items, currentPath)}`);
-      break;
+      return `${acc}\n${getPlain(items, currentPath)}`;
     case 'changed':
-      temp.push(`\nProperty '${currentPath}' was updated. From ${oldValue} to ${newValue}`);
-      break;
-    case 'unchanged': break;
+      return `${acc}\nProperty '${currentPath}' was updated. From ${oldValue} to ${newValue}`;
+    case 'unchanged': return acc;
     default: throw new Error(`Unexpected '${state}' state`);
   }
-
-  return `${acc}${temp.join('')}`;
 }, '').trim();
 
 export default getPlain;

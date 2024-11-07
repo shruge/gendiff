@@ -1,5 +1,5 @@
 const isObject = (val) => (
-  Object.prototype.toString.call(val).toLowerCase() === '[object object]'
+  typeof val === 'object' && !Array.isArray(val) && val !== null && !(val instanceof Function)
 );
 
 export default isObject;
