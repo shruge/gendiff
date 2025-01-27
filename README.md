@@ -1,5 +1,5 @@
 ### Hexlet tests and linter status:
-[![Actions Status](https://github.com/shruge/frontend-project-46/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/shruge/frontend-project-46/actions)	[![Test Coverage](https://api.codeclimate.com/v1/badges/cf4213c75fcbadac78cc/test_coverage)](https://codeclimate.com/github/shruge/frontend-project-46/test_coverage)
+[![Actions Status](https://github.com/shruge/frontend-project-46/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/shruge/frontend-project-46/actions)	[![Test Coverage](https://api.codeclimate.com/v1/badges/a888de88c096d2a59dca/test_coverage)](https://codeclimate.com/github/shruge/gendiff/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/a888de88c096d2a59dca/maintainability)](https://codeclimate.com/github/shruge/gendiff/maintainability)
 
 <h1>Установка:</h1>
 
